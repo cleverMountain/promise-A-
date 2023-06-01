@@ -3,7 +3,7 @@ const REJECTED = 'REJECTED';
 const FULFILLED = 'FULFILLED';
 
 function resolvePromise(promise2, x, resolve, reject) {
-  debugger
+    debugger
     if (promise2 === x) {
         reject("返回值不能是当前promise");
         return;
@@ -61,14 +61,14 @@ class Promise {
         this.rejectCallbacks = [];
 
         let resolve = ((value) => {
-         
+
             if (this.status === PENDING) {
                 this.status = FULFILLED;
                 this.value = value;
                 this.resolveCallbacks.forEach(fn => fn());
             }
         }).bind(this);
-        let reject = (function(reason) {
+        let reject = (function (reason) {
             if (this.status === PENDING) {
                 this.status = REJECTED;
                 this.reason = reason;
@@ -87,7 +87,7 @@ class Promise {
             onfulfilled : value => value;
         onrejected = typeof onrejected === 'function' ?
             onrejected : reason => { throw reason };
-console.log(this.status)
+        console.log(this.status)
 
         let promise2 = new Promise((resolve, reject) => {
             if (this.status === FULFILLED) {
@@ -139,7 +139,7 @@ console.log(this.status)
         return promise2;
     }
 
-    catch (callback) {
+    catch(callback) {
         return this.then(null, callback);
     };
 
