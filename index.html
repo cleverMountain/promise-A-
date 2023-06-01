@@ -13,15 +13,17 @@
   <!-- <script src="./1.js"></script> -->
   <script>
     const promise = new MyPromise((resolve, reject) => {
-      // setTimeout(() => {
-   
-      // }, 1000)
-      resolve('fuilled')
+      setTimeout(() => {
+        resolve('fuilled')
+      }, 1000)
+ 
 
     })
     let b = promise.then(res => {
       console.log(res)
-
+      return new MyPromise((resolve, reject) => {
+        resolve(222)
+      })
     }, err => {
       console.log(err)
     })
@@ -29,10 +31,10 @@
     //   console.log(res)
     // })
   // console.log(b)
-  //   b.then(res => {
-  //     debugger
-  //     console.log(res)
-  //   })
+    b.then(res => {
+    
+      console.log(res)
+    })
   </script>
 </body>
 
