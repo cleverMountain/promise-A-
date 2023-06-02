@@ -12,36 +12,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     reject("返回值不能是当前promise");
     return;
   }
-  let called;
-  // if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
-  //     try {
-  //         let then = x.then;
-  //         if (typeof then === 'function') {
-  //             then.call(
-  //                 x,
-  //                 y => {
-  //                     if (called) return;
-  //                     called = true;
-  //                     resolvePromise(promise2, y, resolve, reject);
-  //                 }, r => {
-  //                     if (called) return;
-  //                     called = true;
-  //                     reject(r);
-  //                 })
-  //         } else {
-  //             if (called) return;
-  //             called = true;
-  //             resolve(e);
-  //         }
-  //     } catch (e) {
-  //         if (called) return;
-  //         called = true;
-  //         reject(e);
-  //     }
-  // } else {
-  //     resolve(x);
 
-  // }
   if (x === promise2) {
     reject('错误')
   }
@@ -58,12 +29,15 @@ function resolvePromise(promise2, x, resolve, reject) {
 
 
 }
+
+
 function MyPromise(excutor) {
   this.status = PENDING;
   this.value = undefined
   this.reason = undefined
   this.resolveCallbacks = []; // 收集回调异步执行
   this.rejectCallbacks = [];
+
   let resolve = (value) => {
     // 只能由pengding状态改为
     if (this.status === PENDING) {
@@ -133,7 +107,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
       this.rejectCallbacks.push(() => {
         setTimeout(() => {
           try {
-            let x =  onRejected(this.reason)
+            let x = onRejected(this.reason)
             resolvePromise(promise2, x, resolve, reject);
           } catch (e) {
             reject(e)
@@ -147,3 +121,55 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
 
 
 }
+
+const fnObj = {
+  resolve: function (res) {
+    return new MyPromise((resolve) => {
+      // 如果是promise
+      if (res instanceof MyPromise) {
+        res.then((r) => resolve(r))
+      } else {
+        resolve(res)
+      }
+    })
+  },
+  reject: function (reason) {
+    return new MyPromise((resolve, reject) => {
+      // 如果是promise
+      if (reason instanceof MyPromise) {
+        reject.then((r) => resolve(r))
+      } else {
+
+        reject(reason)
+      }
+    })
+  },
+  all: function ([...argues]) {
+    try {
+      let result = []
+      argues.forEach(item => {
+        if (item instanceof MyPromise) {
+          item.then(res => {
+            result.push(res)
+          }, reject => {
+            reject('错误')
+          })
+        } else {
+          result.push(item)
+        }
+      })
+      return new MyPromise(resolve => {
+        resolve(result)
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  },
+  race: function () {
+    
+  }
+}
+Array.from(['resolve', 'reject', 'all', 'race']).forEach(method => {
+  MyPromise[method] = fnObj[method]
+
+})

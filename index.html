@@ -16,7 +16,7 @@
       setTimeout(() => {
         resolve('fuilled')
       }, 1000)
- 
+
 
     })
     let b = promise.then(res => {
@@ -30,9 +30,27 @@
     // .then(res => {
     //   console.log(res)
     // })
-  // console.log(b)
+    // console.log(b)
     b.then(res => {
-    
+
+      console.log(res)
+    })
+
+
+
+    let c = MyPromise.resolve(new MyPromise(resolve => resolve(2)))
+    c.then(res => {
+      console.log(res)
+    })
+    let d = MyPromise.reject('reject')
+    d.then(res => {
+      console.log(res)
+    })
+
+    let promise1 = MyPromise.reject(1)
+
+    let promise2 = 2
+    MyPromise.all([promise1, promise2]).then(res => {
       console.log(res)
     })
   </script>
